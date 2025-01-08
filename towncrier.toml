@@ -1,6 +1,6 @@
 [tool.towncrier]
 name = "ref-sample-data"
-filename = "docs/changelog.md"
+filename = "CHANGELOG.md"
 directory = "changelog/"
 title_format = "## ref-sample-data {version} ({project_date})"
 underlines = ["", "", ""]
