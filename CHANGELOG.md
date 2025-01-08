@@ -20,3 +20,7 @@ from the examples given in that link.
 -->
 
 <!-- towncrier release notes start -->
+
+## ref-sample-data 0.0.2 (2025-01-08)
+
+No significant changes.
