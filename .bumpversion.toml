@@ -19,7 +19,7 @@ setup_hooks = []
 pre_commit_hooks = [
     "uv lock",
     "git add uv.lock",
-    "uv run towncrier build --yes --version {new_version}",
+    "uv run towncrier build --yes --version $BVHOOK_NEW_VERSION",
 ]
 post_commit_hooks = []
 
