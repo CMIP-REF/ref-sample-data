@@ -37,9 +37,10 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Run fetch script
+      - name: Verify registry
         run: |
-          uv run python scripts/fetch_test_data.py
+          make registry.txt
+          git diff --exit-code
 
   # Check if a changelog message was added to the PR
   # Only runs on pull requests

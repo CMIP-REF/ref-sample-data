@@ -27,27 +27,12 @@ pre-commit:  ## run all the linting checks of the codebase
 	uv run pre-commit run --all-files
 
 
-.PHONY: mypy
-mypy:  ## run mypy on the codebase
-	MYPYPATH=stubs uv run src
-
 .PHONY: ruff-fixes
 ruff-fixes:  ## fix the code using ruff
 	uv run ruff check --fix
 	uv run ruff format
 
 		-r a -v --doctest-modules --cov=packages/ref-metrics-esmvaltool/src
-
-.PHONY: test-integration
-test-integration:  ## run the integration tests
-
-
-.PHONY: test
-test:  ## run the tests
-	uv run \
-		pytest tests \
-		-r a -v
-
 
 .PHONY: changelog-draft
 changelog-draft:  ## compile a draft of the next changelog
@@ -67,3 +52,6 @@ virtual-environment:  ## update virtual environment, create a new one if it does
 .PHONY: fetch-test-data
 fetch-test-data:  ## Fetch test data
 	uv run python ./scripts/fetch_test_data.py
+
+registry.txt: data  ## Generate a registry of all the packages
+	uv run python -c "import pooch; pooch.make_registry('data', 'registry.txt')"
