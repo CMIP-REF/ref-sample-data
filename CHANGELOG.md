@@ -23,9 +23,4 @@ from the examples given in that link.
 
 ## ref-sample-data 0.1.0 (2025-01-08)
 
-No significant changes.
-
-
-## ref-sample-data 0.0.2 (2025-01-08)
-
-No significant changes.
+Initial release of the CMIP Rapid Evaluation Framework Sample Data.
