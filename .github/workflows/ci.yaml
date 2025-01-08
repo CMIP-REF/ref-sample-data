@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+    tags: ['v*']
+
+jobs:
+  pre-commit:
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - name: pre-commit
+        run: make pre-commit
+
+  tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ "ubuntu-latest" ]
+        python-version: [ "3.12"]
+    runs-on: "${{ matrix.os }}"
+    defaults:
+      run:
+        # This might be needed for Windows and doesn't seem to affect unix-based systems
+        # so we include it. If you have better proof of whether this is needed or not,
+        # feel free to update.
+        shell: bash
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run fetch script
+        run: |
+          uv run python scripts/fetch_test_data.py
+
+  # Check if a changelog message was added to the PR
+  # Only runs on pull requests
+  check-for-changelog:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - name: Get all changelog files
+        id: changed-changelog-files
+        uses: tj-actions/changed-files@v45
+        with:
+          # Avoid using single or double quotes for multiline patterns
+          files: |
+            changelog/*.md
+      - name: Print out the changed files
+        if: steps.changed-files-specific.outputs.any_changed == 'true'
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed-changelog-files.outputs.all_changed_files }}
+        run: |
+          make changelog-draft
+      - name: Fail if no changelog message is present
+        if: steps.changed-changelog-files.outputs.any_changed == 'false'
+        run: |
+          echo "No changelog present."
+          exit 1

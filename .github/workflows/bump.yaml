@@ -1,0 +1,46 @@
+# Bump the project's version
+# This will generate a commit with the new version and a changelog entry
+# This also tags the commit with the new version
+
+name: Bump version
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump_rule:
+        type: choice
+        description: How to bump the project's version
+        options:
+          - patch
+          - minor
+          - major
+#          - prerelease
+        required: true
+
+jobs:
+  bump_version:
+    name: "Bump version and create changelog"
+    if: "!startsWith(github.event.head_commit.message, 'bump:')"
+    runs-on: ubuntu-latest
+    env:
+      CI_COMMIT_EMAIL: "ci-runner@cmip-ref.invalid"
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.PAT }}
+
+      - uses: ./.github/actions/setup
+        with:
+          python-version: 3.12
+
+      - name: Create bump and changelog
+
+        run: |
+          git config --global user.name "$GITHUB_ACTOR"
+          git config --global user.email "$CI_COMMIT_EMAIL"
+
+          # Bump
+          uv run bump-my-version bump ${{ github.event.inputs.bump_rule }} -vv --tag --commit
+          git push && git push --tags
