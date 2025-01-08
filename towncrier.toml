@@ -2,7 +2,7 @@
 name = "ref-sample-data"
 filename = "CHANGELOG.md"
 directory = "changelog/"
-title_format = "## ref-sample-data {version} ({project_date})"
+title_format = "## {name} {version} ({project_date})"
 underlines = ["", "", ""]
 issue_format = "[#{issue}](https://github.com/CMIP-REF/ref-sample-data/pulls/{issue})"
 
