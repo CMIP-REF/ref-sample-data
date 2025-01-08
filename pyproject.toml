@@ -1,6 +1,6 @@
 [project]
 name = "cmip-ref-sample-data"
-version = "0.0.2"
+version = "0.1.0"
 description = "CMIP Rapid Evaluation Framework Sample Data"
 readme = "README.md"
 authors = [
