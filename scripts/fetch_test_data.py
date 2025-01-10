@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
+import pooch
 import xarray as xr
 from intake_esgf import ESGFCatalog
 
@@ -90,7 +91,6 @@ def create_out_filename(metadata: pd.Series, ds: xr.Dataset) -> pathlib.Path:
         "table_id",
         "variable_id",
         "grid_label",
-        "version",
     ]
 
     cmip6_filename_paths = [
@@ -102,7 +102,9 @@ def create_out_filename(metadata: pd.Series, ds: xr.Dataset) -> pathlib.Path:
         "grid_label",
     ]
 
-    output_path = Path(os.path.join(*[metadata[item] for item in cmip6_path_items]))
+    output_path = (
+        Path(os.path.join(*[metadata[item] for item in cmip6_path_items])) / f"v{metadata['version']}"
+    )
     filename_prefix = "_".join([metadata[item] for item in cmip6_filename_paths])
 
     if "time" in ds.dims:
@@ -149,3 +151,5 @@ if __name__ == "__main__":
             output_filename = OUTPUT_PATH / create_out_filename(dataset, ds_orig)
             output_filename.parent.mkdir(parents=True, exist_ok=True)
             ds_downscaled.to_netcdf(output_filename)
+
+    pooch.make_registry(OUTPUT_PATH, "registry.txt")
