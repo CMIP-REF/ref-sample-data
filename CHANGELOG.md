@@ -21,6 +21,14 @@ from the examples given in that link.
 
 <!-- towncrier release notes start -->
 
+## ref-sample-data 0.2.0 (2025-01-10)
+
+### Breaking Changes
+
+- Use the dataset version's from ESGF instead of the values in the netCDF files.
+  Different files in the same dataset may contain different versions inside their netCDF files. ([#2](https://github.com/CMIP-REF/ref-sample-data/pulls/2))
+
+
 ## ref-sample-data 0.1.1 (2025-01-08)
 
 ### Bug Fixes
