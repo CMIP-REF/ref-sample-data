@@ -23,7 +23,9 @@ from the examples given in that link.
 
 ## ref-sample-data 0.1.1 (2025-01-08)
 
-No significant changes.
+### Bug Fixes
+
+- Correct the location of the datasets within the repository ([#1](https://github.com/CMIP-REF/ref-sample-data/pulls/1))
 
 
 ## ref-sample-data 0.1.0 (2025-01-08)
