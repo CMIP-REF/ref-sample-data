@@ -21,6 +21,13 @@ from the examples given in that link.
 
 <!-- towncrier release notes start -->
 
+## ref-sample-data 0.2.1 (2025-01-10)
+
+### Bug Fixes
+
+- Fix the missing leading `v` in the version directory name ([#3](https://github.com/CMIP-REF/ref-sample-data/pulls/3))
+
+
 ## ref-sample-data 0.2.0 (2025-01-10)
 
 ### Breaking Changes
