@@ -51,6 +51,7 @@ virtual-environment:  ## update virtual environment, create a new one if it does
 
 .PHONY: fetch-test-data
 fetch-test-data:  ## Fetch test data
+	rm -rf data
 	uv run python ./scripts/fetch_test_data.py
 
 registry.txt: data  ## Generate a registry of all the packages

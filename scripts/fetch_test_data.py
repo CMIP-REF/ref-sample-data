@@ -9,13 +9,14 @@ import pathlib
 from pathlib import Path
 from typing import Any
 
+import pandas as pd
 import xarray as xr
 from intake_esgf import ESGFCatalog
 
 OUTPUT_PATH = Path("data")
 
 
-def fetch_datasets(search_facets: dict[str, Any], remove_ensembles: bool) -> list[Path]:
+def fetch_datasets(search_facets: dict[str, Any], remove_ensembles: bool) -> pd.DataFrame:
     """
     Fetch the datasets from ESGF.
 
@@ -37,13 +38,14 @@ def fetch_datasets(search_facets: dict[str, Any], remove_ensembles: bool) -> lis
     if remove_ensembles:
         cat.remove_ensembles()
 
-    path_dict = cat.to_path_dict(prefer_streaming=False)
+    path_dict = cat.to_path_dict(prefer_streaming=False, minimal_keys=False)
 
-    # Flatten list of lists into a single list
-    return [p for dataset_paths in path_dict.values() for p in dataset_paths]
+    merged_df = cat.df.merge(pd.Series(path_dict, name="files"), left_on="key", right_index=True)
+
+    return merged_df
 
 
-def downscale_dataset(dataset: xr.Dataset) -> xr.Dataset:
+def decimate_dataset(dataset: xr.Dataset) -> xr.Dataset:
     """
     Downscale the dataset to a smaller size.
 
@@ -65,7 +67,7 @@ def downscale_dataset(dataset: xr.Dataset) -> xr.Dataset:
     return spatial_downscale
 
 
-def create_out_filename(ds: xr.Dataset) -> pathlib.Path:
+def create_out_filename(metadata: pd.Series, ds: xr.Dataset) -> pathlib.Path:
     """
     Create the output filename for the dataset.
 
@@ -80,11 +82,11 @@ def create_out_filename(ds: xr.Dataset) -> pathlib.Path:
     """
     cmip6_path_items = [
         "mip_era",
-        "activity_id",
+        "activity_drs",
         "institution_id",
         "source_id",
         "experiment_id",
-        "variant_label",
+        "member_id",
         "table_id",
         "variable_id",
         "grid_label",
@@ -96,43 +98,54 @@ def create_out_filename(ds: xr.Dataset) -> pathlib.Path:
         "table_id",
         "source_id",
         "experiment_id",
-        "variant_label",
+        "member_id",
         "grid_label",
     ]
 
-    output_path = Path(os.path.join(*[str(ds.attrs[item]) for item in cmip6_path_items]))
+    output_path = Path(os.path.join(*[metadata[item] for item in cmip6_path_items]))
+    filename_prefix = "_".join([metadata[item] for item in cmip6_filename_paths])
 
     if "time" in ds.dims:
         time_range = f"{ds.time.min().dt.strftime('%Y%m').item()}-{ds.time.max().dt.strftime('%Y%m').item()}"
-        filename = "_".join([str(ds.attrs[item]) for item in cmip6_filename_paths]) + f"_{time_range}.nc"
+        filename = f"{filename_prefix}_{time_range}.nc"
     else:
-        filename = "_".join([str(ds.attrs[item]) for item in cmip6_filename_paths]) + ".nc"
+        filename = f"{filename_prefix}.nc"
     return output_path / filename
 
 
 if __name__ == "__main__":
-    datasets: list[Path] = []
-
     facets_to_fetch = [
         dict(
             source_id="ACCESS-ESM1-5",
             frequency="mon",
             variable_id=["tas", "rsut", "rlut", "rsdt"],
-            experiment_id=["ssp119", "ssp126", "historical"],
+            experiment_id=["ssp126", "historical"],
+            remove_ensembles=True,
+        ),
+        dict(
+            source_id="ACCESS-ESM1-5",
+            frequency="fx",
+            variable_id=["areacella"],
+            experiment_id=["ssp126", "historical"],
             remove_ensembles=True,
         ),
     ]
 
+    dataset_metadata_collection: list[pd.DataFrame] = []
     for facets in facets_to_fetch:
         remove_ensembles = facets.pop("remove_ensembles", False)
-        datasets.extend(fetch_datasets(facets, remove_ensembles=remove_ensembles))
 
-    print(datasets)
-    for dataset_path in datasets:
-        ds_orig = xr.open_dataset(dataset_path)
+        dataset_metadata_collection.append(fetch_datasets(facets, remove_ensembles=remove_ensembles))
 
-        ds_downscaled = downscale_dataset(ds_orig)
+    datasets = pd.concat(dataset_metadata_collection)
 
-        output_filename = OUTPUT_PATH / create_out_filename(ds_orig)
-        output_filename.parent.mkdir(parents=True, exist_ok=True)
-        ds_downscaled.to_netcdf(output_filename)
+    for _, dataset in datasets.iterrows():
+        print(dataset.key)
+        for ds_filename in dataset["files"]:
+            ds_orig = xr.open_dataset(ds_filename)
+
+            ds_downscaled = decimate_dataset(ds_orig)
+
+            output_filename = OUTPUT_PATH / create_out_filename(dataset, ds_orig)
+            output_filename.parent.mkdir(parents=True, exist_ok=True)
+            ds_downscaled.to_netcdf(output_filename)
