@@ -51,6 +51,34 @@ def fetch_datasets(
     return merged_df
 
 
+def deduplicate_datasets(datasets: pd.DataFrame) -> pd.DataFrame:
+    """
+    Deduplicate a dataset collection.
+
+    Uses the metadata from the first dataset in each group,
+    but expands the time range to the min/max timespan of the group.
+
+    Parameters
+    ----------
+    datasets
+        The dataset collection
+
+    Returns
+    -------
+    pd.DataFrame
+        The deduplicated dataset collection spanning the times requested
+    """
+
+    def _deduplicate_group(group: pd.DataFrame) -> pd.DataFrame:
+        first = group.iloc[0].copy()
+        first.time_start = group.time_start.min()
+        first.time_end = group.time_end.max()
+
+        return first
+
+    return datasets.groupby("key").apply(_deduplicate_group, include_groups=False).reset_index()
+
+
 def decimate_dataset(dataset: xr.Dataset, time_span: tuple[str, str] | None) -> xr.Dataset | None:
     """
     Downscale the dataset to a smaller size.
@@ -138,16 +166,16 @@ if __name__ == "__main__":
 
     dataset_metadata_collection: list[pd.DataFrame] = []
     for facets in facets_to_fetch:
-        remove_ensembles = facets.pop("remove_ensembles", False)
-        time_span = facets.pop("time_span", None)
-
         dataset_metadata_collection.append(
-            fetch_datasets(facets, remove_ensembles=remove_ensembles, time_span=time_span)
+            fetch_datasets(
+                facets,
+                remove_ensembles=facets.pop("remove_ensembles", False),
+                time_span=facets.pop("time_span", None),
+            )
         )
 
     # Combine all datasets
-    # The first dataset found will define the timespan of the output dataset
-    datasets = pd.concat(dataset_metadata_collection).drop_duplicates("key")
+    datasets = deduplicate_datasets(pd.concat(dataset_metadata_collection))
 
     for _, dataset in datasets.iterrows():
         print(dataset.key)
@@ -162,4 +190,5 @@ if __name__ == "__main__":
             output_filename.parent.mkdir(parents=True, exist_ok=True)
             ds_decimated.to_netcdf(output_filename)
 
+    # Regenerate the registry.txt file
     pooch.make_registry(OUTPUT_PATH, "registry.txt")
