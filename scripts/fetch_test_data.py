@@ -144,6 +144,7 @@ if __name__ == "__main__":
     for _, dataset in datasets.iterrows():
         print(dataset.key)
         for ds_filename in dataset["files"]:
+            print(f"Raw Hash: {pooch.file_hash(ds_filename)}")
             ds_orig = xr.open_dataset(ds_filename)
 
             ds_downscaled = decimate_dataset(ds_orig)
@@ -151,5 +152,6 @@ if __name__ == "__main__":
             output_filename = OUTPUT_PATH / create_out_filename(dataset, ds_orig)
             output_filename.parent.mkdir(parents=True, exist_ok=True)
             ds_downscaled.to_netcdf(output_filename)
+            print(f"Finished Hash: {pooch.file_hash(str(output_filename))}")
 
     pooch.make_registry(OUTPUT_PATH, "registry.txt")

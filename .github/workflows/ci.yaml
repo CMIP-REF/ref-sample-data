@@ -37,6 +37,10 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: List nc dependencies
+        run: |
+          uv run python -c 'import netCDF4;print(f"netcdf: {netCDF4.__version__}");print(f"hdf5: {netCDF4.__hdf5libversion__}");print(f"libnetcdf: {netCDF4.__netcdf4libversion__}")'
+
       - name: Verify registry
         run: |
           make fetch-test-data
