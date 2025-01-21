@@ -10,6 +10,7 @@ on:
 jobs:
   regenerate:
     name: Regenerate sample data
+    runs-on: ubuntu-latest
     if: ${{ github.event.issue.pull_request && github.event.comment.body == '/regenerate' }}
     steps:
       - name: Put a reaction to the comment
@@ -73,6 +74,7 @@ jobs:
 
   notify-job:
     needs: [regenerate]
+    runs-on: ubuntu-latest
     if: ${{ always() && contains(needs.*.result, 'failure') }}
     steps:
       - name: Notify on Failure
