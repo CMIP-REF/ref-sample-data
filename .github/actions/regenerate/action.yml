@@ -1,6 +1,5 @@
 name: "Regenerate sample data"
 description: "Runs the regenerate sample data workflow and commits the result"
-
 runs:
   using: "composite"
   steps:
