@@ -41,11 +41,14 @@ jobs:
           PR_NUMBER: ${{ github.event.issue.number }}
           NODE_ID: ${{ github.event.comment.node_id }}
 
-      - name: Get PR HEAD branch
-        id: getBranch
+      - name: Get PR HEAD branch and repository
+        id: getRepository
         # This gets the PR's head ref name (aka branch)
         # We can't use the SHA or the default because of how this workflow is triggered
-        run: echo "pr_branch=$(gh pr view $PR_NUMBER --repo ${{ github.repository }} --json headRefName | jq -r '.headRefName')" >> $GITHUB_OUTPUT
+        run: |
+          echo "pr_branch=$(gh pr view $PR_NUMBER --repo ${{ github.repository }} --json headRefName | jq -r '.headRefName')" >> $GITHUB_OUTPUT
+          echo "owner=$(gh pr view $PR_NUMBER --repo ${{ github.repository }} --json headRepositoryOwner | jq -r '.headRepositoryOwner.login')" >> $GITHUB_OUTPUT
+          echo "repository=$(gh pr view $PR_NUMBER --repo ${{ github.repository }} --json headRepository | jq -r '.headRepository.name')" >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.issue.number }}
@@ -54,7 +57,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ steps.getBranch.outputs.pr_branch }}
+          repository: '${{ steps.getRepository.outputs.owner }}/${{ steps.getRepository.outputs.repository }}'
+          ref: ${{ steps.getRepository.outputs.pr_branch }}
           token: ${{ secrets.PAT }}
 
       - name: Run the regeneration
