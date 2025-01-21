@@ -95,7 +95,20 @@ def decimate_dataset(dataset: xr.Dataset, time_span: tuple[str, str] | None) -> 
     xr.Dataset
         The downscaled dataset
     """
-    result = dataset.interp(lat=dataset.lat[::10], lon=dataset.lon[::10])
+    has_latlon = "lat" in dataset.dims and "lon" in dataset.dims
+    has_ij = "i" in dataset.dims and "j" in dataset.dims
+
+    if has_latlon:
+        assert len(dataset.lat.dims) == 1 and len(dataset.lon.dims) == 1
+        result = dataset.interp(lat=dataset.lat[:10], lon=dataset.lon[:10])
+    elif has_ij:
+        # 2d lat/lon grid (generally ocean variables)
+        # Choose a starting point around the middle of the grid to maximise chance that it has values
+        # TODO: Be smarter about this?
+        j_midpoint = len(dataset.j) // 2
+        result = dataset.interp(i=dataset.i[:10], j=dataset.j[j_midpoint : j_midpoint + 10])
+    else:
+        raise ValueError("Cannot decimate this grid: too many dimensions")
 
     if "time" in dataset.dims and time_span is not None:
         result = result.sel(time=slice(*time_span))
@@ -157,7 +170,7 @@ if __name__ == "__main__":
         dict(
             source_id="ACCESS-ESM1-5",
             frequency=["fx", "mon"],
-            variable_id=["areacella", "tas", "rsut", "rlut", "rsdt"],
+            variable_id=["areacella", "tas", "tos", "rsut", "rlut", "rsdt"],
             experiment_id=["ssp126", "historical"],
             remove_ensembles=True,
             time_span=("2000", "2025"),
