@@ -183,6 +183,7 @@ if __name__ == "__main__":
             variable_id=["areacella", "rlut", "rsdt", "rsut", "tas"],
             experiment_id=["abrupt-4xCO2", "piControl"],
             remove_ensembles=True,
+            time_span=("0101", "0125"),
         ),
         # ESMValTool TCR data
         dict(
@@ -191,6 +192,7 @@ if __name__ == "__main__":
             variable_id=["areacella", "tas"],
             experiment_id=["1pctCO2", "piControl"],
             remove_ensembles=True,
+            time_span=("0101", "0180"),
         ),
     ]
 
