@@ -1,0 +1,35 @@
+name: Regenerate sample data
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update-data:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ "ubuntu-latest" ]
+        python-version: [ "3.12"]
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.PAT }}
+      - uses: ./.github/actions/setup
+        with:
+          python-version: 3.12
+
+      - name: Verify registry
+        run: |
+          git config --global user.name "$GITHUB_ACTOR"
+          git config --global user.email "$CI_COMMIT_EMAIL"
+
+          make fetch-test-data
+          make registry.txt
+          git diff
+
+          git add data registry.txt
+          git commit -m "Updated sample data"
+          git push
