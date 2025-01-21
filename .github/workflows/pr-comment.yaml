@@ -78,6 +78,9 @@ jobs:
   notify-job:
     needs: [regenerate]
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     if: ${{ always() && contains(needs.*.result, 'failure') }}
     steps:
       - name: Notify on Failure
