@@ -24,7 +24,7 @@ The data that are tracked and the decimation process is described in: [scripts/f
 
 ### Regenerating the sample data
 
-The file hashes of the generated sample data may vary by platform and various other dependencies.
+The binary content of the generated sample data may vary by platform and various other dependencies.
 In order to ensure that the hashes are consistent across platforms,
 the hashes are generated on the CI and stored in the `registry.txt` file.
 These hashes are verified as part of the CI pipeline to ensure that the data is consistent.
