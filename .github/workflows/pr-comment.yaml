@@ -1,11 +1,11 @@
 # Run the regeneration when a comment is made on a PR that contains the text "/regenerate".
 # Draws from a very useful blog article: https://grem1.in/post/gha-comment-trigger/
 
-name: PR Comment handling
+name: PR comment handling
 on:
   issue_comment:
-  types:
-    - created
+    types:
+      - created
 
 jobs:
   regenerate:
