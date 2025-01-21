@@ -39,7 +39,7 @@ jobs:
 
       - name: Verify registry
         run: |
-          make registry.txt
+          make fetch-test-data
           git diff --exit-code
 
   # Check if a changelog message was added to the PR

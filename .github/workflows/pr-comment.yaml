@@ -1,0 +1,106 @@
+# Run the regeneration when a comment is made on a PR that contains the text "/regenerate".
+# Draws from a very useful blog article: https://grem1.in/post/gha-comment-trigger/
+
+name: PR comment handling
+on:
+  issue_comment:
+    types:
+      - created
+
+jobs:
+  regenerate:
+    name: Regenerate sample data
+    runs-on: ubuntu-latest
+    if: ${{ github.event.issue.pull_request && github.event.comment.body == '/regenerate' }}
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Put a reaction to the comment
+        run: gh api graphql --silent --raw-field query="mutation AddReaction {addReaction(input:{subjectId:\"$NODE_ID\",content:EYES}){reaction{content}subject{id}}}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_ID: ${{ github.event.comment.node_id }}
+
+      - name: Check if PR is open
+        run: |
+          STATE=$(gh pr view $PR_NUMBER --repo ${{ github.repository }} --json state --jq .state)
+          if [ "$STATE" != "OPEN" ]; then
+            echo "Cannot build for closed PRs"
+            (
+              echo "**${{ github.workflow }}**"
+              echo "Cannot build regenerate the smaple data for a closed PR."
+            ) | \
+            gh pr comment "${PR_NUMBER}" --repo ${{ github.repository }} -F -
+            gh api graphql --silent --raw-field query="mutation AddReaction {addReaction(input:{subjectId:\"$NODE_ID\",content:THUMBS_DOWN}){reaction{content}subject{id}}}"
+            gh api graphql --silent --raw-field query="mutation RemoveReaction {removeReaction(input:{subjectId:\"$NODE_ID\",content:EYES}){reaction{content}subject{id}}}"
+            exit 1
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+          NODE_ID: ${{ github.event.comment.node_id }}
+
+      - name: Get PR HEAD branch and repository
+        id: getRepository
+        # This gets the PR's head ref name (aka branch)
+        # We can't use the SHA or the default because of how this workflow is triggered
+        run: |
+          echo "pr_branch=$(gh pr view $PR_NUMBER --repo ${{ github.repository }} --json headRefName | jq -r '.headRefName')" >> $GITHUB_OUTPUT
+          echo "owner=$(gh pr view $PR_NUMBER --repo ${{ github.repository }} --json headRepositoryOwner | jq -r '.headRepositoryOwner.login')" >> $GITHUB_OUTPUT
+          echo "repository=$(gh pr view $PR_NUMBER --repo ${{ github.repository }} --json headRepository | jq -r '.headRepository.name')" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+
+      - name: Checkout source code from Github
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          repository: '${{ steps.getRepository.outputs.owner }}/${{ steps.getRepository.outputs.repository }}'
+          ref: ${{ steps.getRepository.outputs.pr_branch }}
+          token: ${{ secrets.PAT }}
+
+      - name: Run the regeneration
+        uses: ./.github/actions/regenerate
+
+      - name: Final Comment
+        run: |
+          gh api graphql --silent --raw-field query="mutation AddReaction {addReaction(input:{subjectId:\"$NODE_ID\",content:THUMBS_UP}){reaction{content}subject{id}}}"
+          gh api graphql --silent --raw-field query="mutation RemoveReaction {removeReaction(input:{subjectId:\"$NODE_ID\",content:EYES}){reaction{content}subject{id}}}"
+          (
+            echo "**${{ github.workflow }}**"
+            echo "The regenerate task is done!"
+            echo
+            echo "You can find the workflow here:"
+            echo "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          ) | \
+          gh pr comment "${PR_NUMBER}" --repo ${{ github.repository }} -F -
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+          NODE_ID: ${{ github.event.comment.node_id }}
+
+  notify-job:
+    needs: [regenerate]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    if: ${{ always() && contains(needs.*.result, 'failure') }}
+    steps:
+      - name: Notify on Failure
+        run: |
+          gh api graphql --silent --raw-field query="mutation AddReaction {addReaction(input:{subjectId:\"$NODE_ID\",content:THUMBS_DOWN}){reaction{content}subject{id}}}"
+          gh api graphql --silent --raw-field query="mutation RemoveReaction {removeReaction(input:{subjectId:\"$NODE_ID\",content:EYES}){reaction{content}subject{id}}}"
+          (
+            echo "**${{ github.workflow }}**"
+            echo "**Something went wrong!**"
+            echo
+            echo "**Details:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          ) | \
+          gh pr comment "${PR_NUMBER}" --repo ${{ github.repository }} -F -
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+          NODE_ID: ${{ github.event.comment.node_id }}
