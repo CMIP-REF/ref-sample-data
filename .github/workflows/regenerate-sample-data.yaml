@@ -1,0 +1,15 @@
+name: Regenerate sample data
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update-data:
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.PAT }}
+      - uses: ./.github/actions/regenerate
