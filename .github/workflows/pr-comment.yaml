@@ -12,6 +12,9 @@ jobs:
     name: Regenerate sample data
     runs-on: ubuntu-latest
     if: ${{ github.event.issue.pull_request && github.event.comment.body == '/regenerate' }}
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - name: Put a reaction to the comment
         run: gh api graphql --silent --raw-field query="mutation AddReaction {addReaction(input:{subjectId:\"$NODE_ID\",content:EYES}){reaction{content}subject{id}}}"
