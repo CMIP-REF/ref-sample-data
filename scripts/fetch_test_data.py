@@ -117,6 +117,7 @@ def create_out_filename(metadata: pd.Series, ds: xr.Dataset) -> pathlib.Path:
 
 if __name__ == "__main__":
     facets_to_fetch = [
+        # Example metric data
         dict(
             source_id="ACCESS-ESM1-5",
             frequency="mon",
@@ -129,6 +130,22 @@ if __name__ == "__main__":
             frequency="fx",
             variable_id=["areacella"],
             experiment_id=["ssp126", "historical"],
+            remove_ensembles=True,
+        ),
+        # ESMValTool ECS data
+        dict(
+            source_id="ACCESS-ESM1-5",
+            frequency=["fx", "mon"],
+            variable_id=["areacella", "rlut", "rsdt", "rsut", "tas"],
+            experiment_id=["abrupt-4xCO2", "piControl"],
+            remove_ensembles=True,
+        ),
+        # ESMValTool TCR data
+        dict(
+            source_id="ACCESS-ESM1-5",
+            frequency=["fx", "mon"],
+            variable_id=["areacella", "tas"],
+            experiment_id=["1pctCO2", "piControl"],
             remove_ensembles=True,
         ),
     ]
