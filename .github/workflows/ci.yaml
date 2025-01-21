@@ -39,7 +39,6 @@ jobs:
 
       - name: Verify registry
         run: |
-          make fetch-test-data
           make registry.txt
           git diff --exit-code
 
