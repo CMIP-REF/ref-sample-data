@@ -21,6 +21,29 @@ from the examples given in that link.
 
 <!-- towncrier release notes start -->
 
+## ref-sample-data 0.3.0 (2025-01-21)
+
+### Breaking Changes
+
+- Output files now contain a contiguous time dimension for a selected time span.
+
+  The output files are no longer 6monthly samples of the results.
+  This was not directly useful for metrics package developers.
+  The output file names now contain the start and end date of the dataset
+  instead of mimicking the original dataset. ([#5](https://github.com/CMIP-REF/ref-sample-data/pulls/5))
+
+### Features
+
+- Added the files required to run ESMValTool ECS and TCR metrics. ([#4](https://github.com/CMIP-REF/ref-sample-data/pulls/4))
+- Added an action to regenerate the sample data in Pull Requests.
+
+  A comment containing `/regenerate` will trigger the action. ([#7](https://github.com/CMIP-REF/ref-sample-data/pulls/7))
+
+### Bug Fixes
+
+- Migrates the source of truth for data generation to the server and documented the regeneration flow ([#8](https://github.com/CMIP-REF/ref-sample-data/pulls/8))
+
+
 ## ref-sample-data 0.2.1 (2025-01-10)
 
 ### Bug Fixes
