@@ -298,7 +298,7 @@ def fetch_datasets(DataRequest) -> pd.DataFrame:
     return merged_df
 
 
-def deduplicate_datasets(DataRequest) -> pd.DataFrame:
+def deduplicate_datasets(request: DataRequest) -> pd.DataFrame:
     """
     Deduplicate a dataset collection.
 
