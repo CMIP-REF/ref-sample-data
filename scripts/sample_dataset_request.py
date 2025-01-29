@@ -30,7 +30,7 @@ class DataRequest(ABC):
         """Downscale the dataset to a smaller size."""
         pass
 
-@abstractmethod
+    @abstractmethod
     def create_out_filename(self, metadata: pd.Series, ds: xr.Dataset, ds_filename: str) -> pathlib.Path:
         """Create the output filename for the dataset."""
         pass
@@ -395,7 +395,7 @@ if __name__ == "__main__":
             time_span=("0101", "0180"),
         ),
         # Obs4MIPs AIRS data
-        obs4MIPsRequest(
+        Obs4MIPsRequest(
             facets=dict(
                 project="obs4MIPs",
                 institution_id="NASA-JPL",
@@ -407,7 +407,6 @@ if __name__ == "__main__":
             time_span=("2002", "2016"),
         ),
     ]
-
 
     for dataset_requested in datasets_to_fetch:
         create_sample_dataset(dataset_requested)
