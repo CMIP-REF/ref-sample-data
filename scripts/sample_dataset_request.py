@@ -153,7 +153,7 @@ class CMIP6Request(DataRequest):
         return output_path / filename
 
 
-class obs4MIPsRequest(DataRequest):
+class Obs4MIPsRequest(DataRequest):
     """
     Represents a Obs4MIPs dataset request
 
