@@ -42,7 +42,6 @@ def fetch_datasets(
         cat.remove_ensembles()
 
     path_dict = cat.to_path_dict(prefer_streaming=False, minimal_keys=False)
-
     merged_df = cat.df.merge(pd.Series(path_dict, name="files"), left_on="key", right_index=True)
     if time_span:
         merged_df["time_start"] = time_span[0]
@@ -152,10 +151,30 @@ def create_out_filename(metadata: pd.Series, ds: xr.Dataset) -> pathlib.Path:
         "grid_label",
     ]
 
-    output_path = (
-        Path(os.path.join(*[metadata[item] for item in cmip6_path_items])) / f"v{metadata['version']}"
-    )
-    filename_prefix = "_".join([metadata[item] for item in cmip6_filename_paths])
+    obs4mips_path_items = [
+        "activity_id",
+        "institution_id",
+        "source_id",
+        "variable_id",
+        "grid_label",
+    ]
+
+    obs4mips_filename_paths = [
+        "variable_id",
+        "source_id",
+        "grid_label",
+    ]
+
+    if metadata.project == "obs4MIPs":
+        output_path = (
+            Path(os.path.join(*[metadata[item] for item in obs4mips_path_items])) / f"v{metadata['version']}"
+        )
+        filename_prefix = "_".join([metadata[item] for item in obs4mips_filename_paths])
+    else:
+        output_path = (
+            Path(os.path.join(*[metadata[item] for item in cmip6_path_items])) / f"v{metadata['version']}"
+        )
+        filename_prefix = "_".join([metadata[item] for item in cmip6_filename_paths])
 
     if "time" in ds.dims:
         time_range = f"{ds.time.min().dt.strftime('%Y%m').item()}-{ds.time.max().dt.strftime('%Y%m').item()}"
@@ -194,6 +213,16 @@ if __name__ == "__main__":
             remove_ensembles=True,
             time_span=("0101", "0180"),
         ),
+        # Obs4MIPs AIRS data
+        dict(
+            project="obs4MIPs",
+            institution_id="NASA-JPL",
+            frequency="mon",
+            source_id="AIRS-2-1",
+            variable_id="ta",
+            remove_ensembles=False,
+            time_span=("2002", "2016"),
+        ),
     ]
 
     dataset_metadata_collection: list[pd.DataFrame] = []
@@ -210,10 +239,10 @@ if __name__ == "__main__":
     datasets = deduplicate_datasets(pd.concat(dataset_metadata_collection))
 
     for _, dataset in datasets.iterrows():
-        print(dataset.key)
         for ds_filename in dataset["files"]:
+            if ds_filename.name.split("_")[0] != dataset.variable_id:
+                continue
             ds_orig = xr.open_dataset(ds_filename)
-
             ds_decimated = decimate_dataset(ds_orig, time_span=(dataset["time_start"], dataset["time_end"]))
             if ds_decimated is None:
                 continue
