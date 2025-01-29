@@ -327,7 +327,7 @@ def deduplicate_datasets(DataRequest) -> pd.DataFrame:
     return datasets.groupby("key").apply(_deduplicate_group, include_groups=False).reset_index()
 
 
-def create_sample_dataset(DataRequest):
+def create_sample_dataset(request: DataRequest):
     """
     Create the output filename for the dataset.
 
