@@ -21,7 +21,7 @@ class DataRequest(ABC):
     differently to generate the sample data.
     """
 
-    def __init__(self, remove_ensembles, time_span):
+    def __init__(self, remove_ensembles: bool, time_span: tuple[str, str]):
         self.remove_ensembles = remove_ensembles
         self.time_span = time_span
 
