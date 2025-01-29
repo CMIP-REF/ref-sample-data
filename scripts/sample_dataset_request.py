@@ -408,7 +408,6 @@ if __name__ == "__main__":
         ),
     ]
 
-    facet_id_keys = ["source_id", "frequency", "variable_id", "experiment_id"]
 
     for dataset_requested in datasets_to_fetch:
         create_sample_dataset(dataset_requested)
