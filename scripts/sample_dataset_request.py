@@ -267,7 +267,7 @@ class obs4MIPsRequest(DataRequest):
         return output_path / filename
 
 
-def fetch_datasets(DataRequest) -> pd.DataFrame:
+def fetch_datasets(request: DataRequest) -> pd.DataFrame:
     """
     Fetch the datasets from ESGF.
 
