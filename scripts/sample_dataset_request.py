@@ -30,6 +30,7 @@ class DataRequest(ABC):
         """Downscale the dataset to a smaller size."""
         pass
 
+@abstractmethod
     def create_out_filename(self, metadata: pd.Series, ds: xr.Dataset, ds_filename: str) -> pathlib.Path:
         """Create the output filename for the dataset."""
         pass
