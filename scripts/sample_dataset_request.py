@@ -58,8 +58,7 @@ class CMIP6Request(DataRequest):
 
         self.facets = facets
 
-        self.remove_ensembles = remove_ensembles
-        self.time_span = time_span
+        super().__init__(remove_ensembles, time_span)
 
         self.cmip6_path_items = [
             "mip_era",
