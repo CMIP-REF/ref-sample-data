@@ -240,17 +240,16 @@ if __name__ == "__main__":
 
     for _, dataset in datasets.iterrows():
         for ds_filename in dataset["files"]:
-            if ds_filename.name.split("_")[0] == dataset.variable_id:
-                ds_orig = xr.open_dataset(ds_filename)
-                ds_decimated = decimate_dataset(
-                    ds_orig, time_span=(dataset["time_start"], dataset["time_end"])
-                )
-                if ds_decimated is None:
-                    continue
+            if ds_filename.name.split("_")[0] != dataset.variable_id:
+                continue
+            ds_orig = xr.open_dataset(ds_filename)
+            ds_decimated = decimate_dataset(ds_orig, time_span=(dataset["time_start"], dataset["time_end"]))
+            if ds_decimated is None:
+                continue
 
-                output_filename = OUTPUT_PATH / create_out_filename(dataset, ds_decimated)
-                output_filename.parent.mkdir(parents=True, exist_ok=True)
-                ds_decimated.to_netcdf(output_filename)
+            output_filename = OUTPUT_PATH / create_out_filename(dataset, ds_decimated)
+            output_filename.parent.mkdir(parents=True, exist_ok=True)
+            ds_decimated.to_netcdf(output_filename)
 
     # Regenerate the registry.txt file
     pooch.make_registry(OUTPUT_PATH, "registry.txt")
