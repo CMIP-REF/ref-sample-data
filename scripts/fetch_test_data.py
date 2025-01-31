@@ -284,15 +284,15 @@ def fetch_datasets(request: DataRequest) -> pd.DataFrame:
     """
     cat = ESGFCatalog()
 
-    cat.search(**DataRequest.facets)
-    if DataRequest.remove_ensembles:
+    cat.search(**request.facets)
+    if request.remove_ensembles:
         cat.remove_ensembles()
 
     path_dict = cat.to_path_dict(prefer_streaming=False, minimal_keys=False)
     merged_df = cat.df.merge(pd.Series(path_dict, name="files"), left_on="key", right_index=True)
-    if DataRequest.time_span:
-        merged_df["time_start"] = DataRequest.time_span[0]
-        merged_df["time_end"] = DataRequest.time_span[1]
+    if request.time_span:
+        merged_df["time_start"] = request.time_span[0]
+        merged_df["time_end"] = request.time_span[1]
     print(merged_df)
     return merged_df
 
@@ -314,7 +314,7 @@ def deduplicate_datasets(request: DataRequest) -> pd.DataFrame:
     pd.DataFrame
         The deduplicated dataset collection spanning the times requested
     """
-    datasets = fetch_datasets(DataRequest)
+    datasets = fetch_datasets(request)
 
     def _deduplicate_group(group: pd.DataFrame) -> pd.DataFrame:
         first = group.iloc[0].copy()
@@ -339,17 +339,15 @@ def create_sample_dataset(request: DataRequest):
     -------
         The output filename
     """
-    datasets = deduplicate_datasets(DataRequest)
+    datasets = deduplicate_datasets(request)
     for _, dataset in datasets.iterrows():
         for ds_filename in dataset["files"]:
             ds_orig = xr.open_dataset(ds_filename)
-            ds_decimated = DataRequest.decimate_dataset(ds_orig, DataRequest.time_span)
+            ds_decimated = request.decimate_dataset(ds_orig, request.time_span)
             if ds_decimated is None:
                 continue
 
-            output_filename = OUTPUT_PATH / DataRequest.create_out_filename(
-                dataset, ds_decimated, ds_filename
-            )
+            output_filename = OUTPUT_PATH / request.create_out_filename(dataset, ds_decimated, ds_filename)
             output_filename.parent.mkdir(parents=True, exist_ok=True)
             ds_decimated.to_netcdf(output_filename)
             print(output_filename)
