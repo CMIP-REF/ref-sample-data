@@ -173,8 +173,7 @@ class Obs4MIPsRequest(DataRequest):
 
         self.facets = facets
 
-        self.remove_ensembles = remove_ensembles
-        self.time_span = time_span
+        super().__init__(remove_ensembles, time_span)
 
         self.obs4mips_path_items = [
             "activity_id",
