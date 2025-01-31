@@ -26,7 +26,7 @@ class DataRequest(ABC):
         self.time_span = time_span
 
     @abstractmethod
-    def decimate_dataset(dataset: xr.Dataset, time_span: tuple[str, str] | None) -> xr.Dataset | None:
+    def decimate_dataset(self, dataset: xr.Dataset, time_span: tuple[str, str] | None) -> xr.Dataset | None:
         """Downscale the dataset to a smaller size."""
         pass
 
