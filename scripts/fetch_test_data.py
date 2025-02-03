@@ -293,7 +293,6 @@ def fetch_datasets(request: DataRequest) -> pd.DataFrame:
     if request.time_span:
         merged_df["time_start"] = request.time_span[0]
         merged_df["time_end"] = request.time_span[1]
-    print(merged_df)
     return merged_df
 
 
@@ -350,7 +349,6 @@ def create_sample_dataset(request: DataRequest):
             output_filename = OUTPUT_PATH / request.create_out_filename(dataset, ds_decimated, ds_filename)
             output_filename.parent.mkdir(parents=True, exist_ok=True)
             ds_decimated.to_netcdf(output_filename)
-            print(output_filename)
 
     # Regenerate the registry.txt file
     pooch.make_registry(OUTPUT_PATH, "registry.txt")
