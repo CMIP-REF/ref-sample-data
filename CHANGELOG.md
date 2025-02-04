@@ -21,6 +21,14 @@ from the examples given in that link.
 
 <!-- towncrier release notes start -->
 
+## ref-sample-data 0.3.1 (2025-02-04)
+
+### Features
+
+- Added Obs4MIPs sample data to the fetching script. ([#11](https://github.com/CMIP-REF/ref-sample-data/pulls/11))
+- Restructured code into classes so that additional sample datasets can be fetched easily in the future. ([#12](https://github.com/CMIP-REF/ref-sample-data/pulls/12))
+
+
 ## ref-sample-data 0.3.0 (2025-01-21)
 
 ### Breaking Changes
