@@ -389,6 +389,17 @@ if __name__ == "__main__":
             remove_ensembles=True,
             time_span=("0101", "0180"),
         ),
+        # ILAMB data
+        CMIP6Request(
+            facets=dict(
+                source_id="ACCESS-ESM1-5",
+                frequency=["fx", "mon"],
+                variable_id=["areacella", "sftlf", "gpp", "pr"],
+                experiment_id=["historical"],
+            ),
+            remove_ensembles=True,
+            time_span=("2000", "2025"),
+        ),
         # Obs4MIPs AIRS data
         Obs4MIPsRequest(
             facets=dict(
@@ -403,5 +414,5 @@ if __name__ == "__main__":
         ),
     ]
 
-    for dataset_requested in datasets_to_fetch:
+    for dataset_requested in datasets_to_fetch[3:4]:
         create_sample_dataset(dataset_requested)
