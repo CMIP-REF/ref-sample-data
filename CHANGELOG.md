@@ -21,6 +21,13 @@ from the examples given in that link.
 
 <!-- towncrier release notes start -->
 
+## ref-sample-data 0.3.2 (2025-02-14)
+
+### Features
+
+- Added ILAMB testing data. ([#13](https://github.com/CMIP-REF/ref-sample-data/pulls/13))
+
+
 ## ref-sample-data 0.3.1 (2025-02-04)
 
 ### Features
