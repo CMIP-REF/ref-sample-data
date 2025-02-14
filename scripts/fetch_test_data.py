@@ -414,5 +414,5 @@ if __name__ == "__main__":
         ),
     ]
 
-    for dataset_requested in datasets_to_fetch[3:4]:
+    for dataset_requested in datasets_to_fetch:
         create_sample_dataset(dataset_requested)
