@@ -10,6 +10,7 @@ CMIP6/CMIP/CSIRO/ACCESS-ESM1-5/historical/r1i1p1f1/Amon/rlut/gn/v20191115/rlut_A
 CMIP6/CMIP/CSIRO/ACCESS-ESM1-5/historical/r1i1p1f1/Amon/rsdt/gn/v20191115/rsdt_Amon_ACCESS-ESM1-5_historical_r1i1p1f1_gn_200001-201412.nc 53096cef9aacdbefd4e32dabe3705843d21979ba7cc06db9efd30528105effc9
 CMIP6/CMIP/CSIRO/ACCESS-ESM1-5/historical/r1i1p1f1/Amon/rsut/gn/v20191115/rsut_Amon_ACCESS-ESM1-5_historical_r1i1p1f1_gn_200001-201412.nc 0d9373c0824018caa838ce98b3a65d81c411113c60b78194eebc876bd183adaa
 CMIP6/CMIP/CSIRO/ACCESS-ESM1-5/historical/r1i1p1f1/Amon/tas/gn/v20191115/tas_Amon_ACCESS-ESM1-5_historical_r1i1p1f1_gn_200001-201412.nc 8aa1d145b1218634b7d5fb2ae1cc96a7218ee2ff05fa57ac96fa2e9d02eb282e
+CMIP6/CMIP/CSIRO/ACCESS-ESM1-5/historical/r1i1p1f1/Amon/ts/gn/v20191115/ts_Amon_ACCESS-ESM1-5_historical_r1i1p1f1_gn_200001-201412.nc 6ccbf7374326aa3d769e0e87360606afde70d0fd1fef188fb6fe35af3d668c2f
 CMIP6/CMIP/CSIRO/ACCESS-ESM1-5/historical/r1i1p1f1/Lmon/gpp/gn/v20191115/gpp_Lmon_ACCESS-ESM1-5_historical_r1i1p1f1_gn_200001-201412.nc 5578f38d2c4673e2f034c6367c1e9a4bbf35ad084fde0b59bd7d4f52f8e62b65
 CMIP6/CMIP/CSIRO/ACCESS-ESM1-5/historical/r1i1p1f1/Omon/tos/gn/v20191115/tos_Omon_ACCESS-ESM1-5_historical_r1i1p1f1_gn_200001-201412.nc 2dd6a3828136dd5ef427d68e6115f8cc9699a2034adeab17da5bd83c59d2c48c
 CMIP6/CMIP/CSIRO/ACCESS-ESM1-5/historical/r1i1p1f1/fx/areacella/gn/v20191115/areacella_fx_ACCESS-ESM1-5_historical_r1i1p1f1_gn.nc b4ed6bfb22c15541f4d66ca57bee4e2e9c06c6c50676db703b6712565a5c7abf
