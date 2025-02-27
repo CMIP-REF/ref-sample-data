@@ -244,7 +244,7 @@ wheels = [
 [[package]]
 name = "cmip-ref-sample-data"
 version = "0.3.2"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "intake-esgf" },
     { name = "matplotlib" },
