@@ -5,7 +5,7 @@ from typing import Any
 import pandas as pd
 import xarray as xr
 
-from sample_data.data_request.base import DataRequest
+from ref_sample_data.data_request.base import DataRequest
 
 
 class Obs4MIPsRequest(DataRequest):
@@ -100,7 +100,7 @@ class Obs4MIPsRequest(DataRequest):
 
         return result
 
-    def create_out_filename(self, metadata: pd.Series, ds: xr.Dataset, ds_filename: str) -> Path:
+    def generate_filename(self, metadata: pd.Series, ds: xr.Dataset, ds_filename: str) -> Path:
         """
         Create the output filename for the dataset.
 

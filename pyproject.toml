@@ -1,5 +1,5 @@
 [project]
-name = "cmip-ref-sample-data"
+name = "ref-sample-data"
 version = "0.3.2"
 description = "CMIP Rapid Evaluation Framework Sample Data"
 readme = "README.md"
@@ -13,6 +13,7 @@ dependencies = [
     "matplotlib>=3.10.0",
     "scipy>=1.15.0",
     "xarray>=2024.10.0",
+    "typer>=0.15.1",
 ]
 
 [project.license]
@@ -33,10 +34,8 @@ dev-dependencies = [
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-
-
 [tool.coverage.run]
-source = ["packages"]
+source = ["src"]
 branch = true
 
 [tool.coverage.report]

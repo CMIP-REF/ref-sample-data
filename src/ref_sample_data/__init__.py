@@ -4,7 +4,7 @@ REF sample data
 
 import importlib.metadata
 
-__version__ = importlib.metadata.version("sample_data")
+__version__ = importlib.metadata.version("ref_sample_data")
 
 
 from .data_request.base import DataRequest
