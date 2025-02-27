@@ -151,4 +151,5 @@ dmypy.json
 
 # Generated output
 out
+data-raw
 .ref
