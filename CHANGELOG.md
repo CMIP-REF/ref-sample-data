@@ -21,6 +21,14 @@ from the examples given in that link.
 
 <!-- towncrier release notes start -->
 
+## ref-sample-data 0.3.3 (2025-02-27)
+
+### Features
+
+- Add additional data for a PMP metric ([#14](https://github.com/CMIP-REF/ref-sample-data/pulls/14))
+- Allow for the fetching of non-decimated datasets ([#16](https://github.com/CMIP-REF/ref-sample-data/pulls/16))
+
+
 ## ref-sample-data 0.3.2 (2025-02-14)
 
 ### Features
