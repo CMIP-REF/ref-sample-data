@@ -406,9 +406,10 @@ if __name__ == "__main__":
                 source_id="ACCESS-ESM1-5",
                 frequency=["fx", "mon"],
                 variable_id=["areacella", "ts"],
-                experiment_id=["historical", "hist-*"],
+                experiment_id=["historical", "hist-GHG"],
+                variant_label=["r1i1p1f1", "r2i1p1f1"],
             ),
-            remove_ensembles=True,
+            remove_ensembles=False,
             time_span=("2000", "2025"),
         ),
         # Obs4MIPs AIRS data
