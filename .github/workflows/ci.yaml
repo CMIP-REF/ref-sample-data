@@ -36,8 +36,11 @@ jobs:
       - uses: ./.github/actions/setup
         with:
           python-version: ${{ matrix.python-version }}
+          cache-esgf: true
 
       - name: Verify registry
+        env:
+          QUIET: true
         run: |
           make fetch-test-data
           git diff --exit-code

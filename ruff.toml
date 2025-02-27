@@ -23,6 +23,7 @@ ignore = [
     "D200",
     "D400",
     "UP007",
+    "S101" # Use of `assert` detected
 ]
 
 [lint.per-file-ignores]

@@ -9,6 +9,10 @@ inputs:
     description: "The version of uv to use"
     required: true
     default: ">=0.4.20"
+  cache-esgf:
+    description: "Cache any downloaded ESGF data"
+    required: false
+    default: "false"
 
 runs:
   using: "composite"
@@ -27,3 +31,10 @@ runs:
       shell: bash
       run: |
         uv sync --all-extras --dev --locked
+    - name: Cache downloaded ESGF data
+      uses: actions/cache@v4
+      if: ${{ inputs.cache-esgf == 'true' }}
+      with:
+        path: |
+          ~/.esgf
+        key: esgf
