@@ -10,6 +10,8 @@ runs:
 
     - name: Verify registry
       shell: bash
+      env:
+        QUIET: true
       run: |
         git config --global user.name "$GITHUB_ACTOR"
         git config --global user.email "$CI_COMMIT_EMAIL"

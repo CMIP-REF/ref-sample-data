@@ -39,6 +39,8 @@ jobs:
           cache-esgf: true
 
       - name: Verify registry
+        env:
+          QUIET: true
         run: |
           make fetch-test-data
           git diff --exit-code

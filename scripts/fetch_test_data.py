@@ -1,5 +1,6 @@
 import pathlib
 from pathlib import Path
+from typing import Annotated
 
 import pandas as pd
 import pooch
@@ -13,7 +14,7 @@ OUTPUT_PATH = Path("data")
 app = typer.Typer()
 
 
-def fetch_datasets(request: DataRequest) -> pd.DataFrame:
+def fetch_datasets(request: DataRequest, quiet: bool) -> pd.DataFrame:
     """
     Fetch the datasets from ESGF.
 
@@ -21,6 +22,8 @@ def fetch_datasets(request: DataRequest) -> pd.DataFrame:
     ----------
     request
         The request object
+    quiet
+        Whether to suppress progress messages from intake-esgf
 
     Returns
     -------
@@ -32,7 +35,7 @@ def fetch_datasets(request: DataRequest) -> pd.DataFrame:
     if request.remove_ensembles:
         cat.remove_ensembles()
 
-    path_dict = cat.to_path_dict(prefer_streaming=False, minimal_keys=False)
+    path_dict = cat.to_path_dict(prefer_streaming=False, minimal_keys=False, quiet=quiet)
     merged_df = cat.df.merge(pd.Series(path_dict, name="files"), left_on="key", right_index=True)
     if request.time_span:
         merged_df["time_start"] = request.time_span[0]
@@ -68,7 +71,9 @@ def deduplicate_datasets(datasets: pd.DataFrame) -> pd.DataFrame:
     return datasets.groupby("key").apply(_deduplicate_group, include_groups=False).reset_index()
 
 
-def process_sample_data_request(request: DataRequest, decimate: bool, output_directory: Path) -> None:
+def process_sample_data_request(
+    request: DataRequest, decimate: bool, output_directory: Path, quiet: bool
+) -> None:
     """
     Fetch and create sample datasets
 
@@ -82,8 +87,10 @@ def process_sample_data_request(request: DataRequest, decimate: bool, output_dir
         Whether to decimate the datasets
     output_directory
         The directory to write the output to
+    quiet
+        Whether to suppress progress messages
     """
-    datasets = fetch_datasets(request)
+    datasets = fetch_datasets(request, quiet)
     datasets = deduplicate_datasets(datasets)
 
     for _, dataset in datasets.iterrows():
@@ -178,11 +185,15 @@ DATASETS_TO_FETCH = [
 
 
 @app.command()
-def create_sample_data(decimate: bool = True, output: Path = OUTPUT_PATH) -> None:
+def create_sample_data(
+    decimate: bool = True,
+    output: Path = OUTPUT_PATH,
+    quiet: Annotated[bool, typer.Argument(envvar="QUIET")] = False,
+) -> None:
     """Fetch and create sample datasets"""
     for dataset_requested in DATASETS_TO_FETCH:
         process_sample_data_request(
-            dataset_requested, decimate=decimate, output_directory=pathlib.Path(output)
+            dataset_requested, decimate=decimate, output_directory=pathlib.Path(output), quiet=quiet
         )
 
 
