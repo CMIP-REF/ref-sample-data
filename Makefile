@@ -24,35 +24,35 @@ help:  ## print short description of each target
 
 .PHONY: pre-commit
 pre-commit:  ## run all the linting checks of the codebase
-	uv run pre-commit run --all-files
+	pixi run pre-commit run --all-files
 
 
 .PHONY: ruff-fixes
 ruff-fixes:  ## fix the code using ruff
-	uv run ruff check --fix
-	uv run ruff format
+	pixi run ruff check --fix
+	pixi run ruff format
 
 		-r a -v --doctest-modules --cov=packages/ref-metrics-esmvaltool/src
 
 .PHONY: changelog-draft
 changelog-draft:  ## compile a draft of the next changelog
-	uv run towncrier build --draft --version v0.0.0
+	pixi run towncrier build --draft --version v0.0.0
 
 .PHONY: licence-check
 licence-check:  ## Check that licences of the dependencies are suitable
-	uv export --no-dev > $(TEMP_FILE)
-	uv run liccheck -r $(TEMP_FILE) -R licence-check.txt
+	pixi export --no-dev > $(TEMP_FILE)
+	pixi run liccheck -r $(TEMP_FILE) -R licence-check.txt
 	rm -f $(TEMP_FILE)
 
 .PHONY: virtual-environment
 virtual-environment:  ## update virtual environment, create a new one if it doesn't already exist
-	uv sync
-	uv run pre-commit install
+	pixi install
+	pixi run pre-commit install
 
 .PHONY: fetch-test-data
 fetch-test-data:  ## Fetch test data
 	rm -rf data
-	uv run python ./scripts/fetch_test_data.py
+	pixi run python ./scripts/fetch_test_data.py
 
 registry.txt: data  ## Generate a registry of all the packages
-	uv run python -c "import pooch; pooch.make_registry('data', 'registry.txt')"
+	pixi run python -c "import pooch; pooch.make_registry('data', 'registry.txt')"

@@ -42,5 +42,5 @@ jobs:
           git config --global user.email "$CI_COMMIT_EMAIL"
 
           # Bump
-          uv run bump-my-version bump ${{ github.event.inputs.bump_rule }} -vv --tag --commit
+          pixi run bump-my-version bump ${{ github.event.inputs.bump_rule }} -vv --tag --commit
           git push && git push --tags

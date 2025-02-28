@@ -17,9 +17,9 @@ message = "Bump version: {current_version} → {new_version}"
 commit_args = ""
 setup_hooks = []
 pre_commit_hooks = [
-    "uv lock --no-upgrade",
-    "git add uv.lock",
-    "uv run towncrier build --yes --version $BVHOOK_NEW_VERSION",
+    "pixi install",
+    "git add pixi.lock",
+    "pixi run towncrier build --yes --version $BVHOOK_NEW_VERSION",
 ]
 post_commit_hooks = []
 

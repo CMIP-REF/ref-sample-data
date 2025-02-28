@@ -22,6 +22,18 @@ These data are fetched by the REF's test suite to ensure a consistent collection
 The data that are tracked and the decimation process is described in: [scripts/fetch_test_data.py]()
 
 
+### Development Environment
+
+This project uses [pixi](https://pixi.sh) as a package manager. To get started:
+
+1. Install pixi: https://pixi.sh/dev/install/
+2. Set up the development environment:
+   ```bash
+   # These commands can also be run via `make virtual-environment` if you have `make` installed.
+   pixi install
+   pixi run pre-commit install
+   ```
+
 ### Regenerating the sample data
 
 The binary content of the generated sample data may vary by platform and various other dependencies.
