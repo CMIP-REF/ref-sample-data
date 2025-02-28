@@ -26,8 +26,7 @@ typer = ">=0.15.1"
 
 [tool.pixi.pypi-dependencies]
 # Add any dependencies that aren't available on conda-forge here
-# For example, if intake-esgf is not available on conda:
-# intake-esgf = "*"
+ref_sample_data = { path = ".", editable = true }
 
 [tool.pixi.feature.dev.dependencies]
 ruff = "*"
