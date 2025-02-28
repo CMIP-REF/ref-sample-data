@@ -7719,7 +7719,7 @@ packages:
 - pypi: .
   name: ref-sample-data
   version: 0.3.3
-  sha256: 7a2682258ddad61f1c743c377926fdf5cf96d4e722717acda1fe146df02fc6b4
+  sha256: 11f812440131b29197669c8e19798d7717f53f4cd04da8964e8016520db40799
   requires_python: '>=3.10'
   editable: true
 - conda: https://conda.anaconda.org/conda-forge/noarch/requests-2.32.3-pyhd8ed1ab_1.conda
