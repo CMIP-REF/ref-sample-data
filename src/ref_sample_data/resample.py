@@ -47,7 +47,7 @@ def decimate_rectilinear(dataset: xr.Dataset) -> xr.Dataset:
         # Some datasets don't correctly use data_vars
         if "_bnds" in data_var:
             continue
-        output_grid = xcdat.create_uniform_grid(-90, 90, 10, 0, 360, 10)
+        output_grid = xcdat.create_uniform_grid(-90, 90, 10, 0, 359, 10)
         dataset = dataset.regridder.horizontal(
             data_var,
             output_grid=output_grid,
