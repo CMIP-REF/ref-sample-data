@@ -21,6 +21,17 @@ from the examples given in that link.
 
 <!-- towncrier release notes start -->
 
+## ref-sample-data 0.4.0 (2025-03-01)
+
+### Features
+
+- Datasets now span the globe with decreased resolution instead of being a subset of the globe with full resolution. ([#18](https://github.com/CMIP-REF/ref-sample-data/pulls/18))
+
+### Trivial/Internal Changes
+
+- [#17](https://github.com/CMIP-REF/ref-sample-data/pulls/17)
+
+
 ## ref-sample-data 0.3.3 (2025-02-27)
 
 ### Features
