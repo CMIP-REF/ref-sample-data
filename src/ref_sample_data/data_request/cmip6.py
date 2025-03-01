@@ -1,4 +1,5 @@
 import os.path
+import pathlib
 from pathlib import Path
 from typing import Any
 
@@ -6,6 +7,34 @@ import pandas as pd
 import xarray as xr
 
 from ref_sample_data.data_request.base import DataRequest
+from ref_sample_data.resample import decimate_curvilinear, decimate_rectilinear
+
+
+def prefix_to_filename(ds, filename_prefix: str) -> str:
+    """
+    Create a filename from a dataset and a prefix.
+
+    Optionally includes the time range of the dataset if it has a time dimension.
+
+    Parameters
+    ----------
+    ds
+        Dataset
+    filename_prefix
+        Prefix for the filename
+
+        This includes the different facets of the dataset
+
+    Returns
+    -------
+        Filename for the dataset
+    """
+    if "time" in ds.dims:
+        time_range = f"{ds.time.min().dt.strftime('%Y%m').item()}-{ds.time.max().dt.strftime('%Y%m').item()}"
+        filename = f"{filename_prefix}_{time_range}.nc"
+    else:
+        filename = f"{filename_prefix}.nc"
+    return filename
 
 
 class CMIP6Request(DataRequest):
@@ -78,13 +107,11 @@ class CMIP6Request(DataRequest):
 
         if has_latlon:
             assert len(dataset.lat.dims) == 1 and len(dataset.lon.dims) == 1
-            result = dataset.interp(lat=dataset.lat[:10], lon=dataset.lon[:10])
+
+            result = decimate_rectilinear(dataset)
         elif has_ij:
-            # 2d lat/lon grid (generally ocean variables)
-            # Choose a starting point around the middle of the grid to maximise chance that it has values
-            # TODO: Be smarter about this?
-            j_midpoint = len(dataset.j) // 2
-            result = dataset.interp(i=dataset.i[:10], j=dataset.j[j_midpoint : j_midpoint + 10])
+            # 2d curvilinear grid (generally ocean variables)
+            result = decimate_curvilinear(dataset)
         else:
             raise ValueError("Cannot decimate this grid: too many dimensions")
 
@@ -95,7 +122,7 @@ class CMIP6Request(DataRequest):
 
         return result
 
-    def generate_filename(self, metadata: pd.Series, ds: xr.Dataset, ds_filename: str) -> Path:
+    def generate_filename(self, metadata: pd.Series, ds: xr.Dataset, ds_filename: pathlib.Path) -> Path:
         """
         Create the output filename for the dataset.
 
@@ -103,6 +130,9 @@ class CMIP6Request(DataRequest):
         ----------
         ds
             Loaded dataset
+
+        ds_filename:
+            Filename of the dataset (Unused)
 
         Returns
         -------
@@ -114,12 +144,4 @@ class CMIP6Request(DataRequest):
         )
         filename_prefix = "_".join([metadata[item] for item in self.cmip6_filename_paths])
 
-        if "time" in ds.dims:
-            time_range = (
-                f"{ds.time.min().dt.strftime('%Y%m').item()}-{ds.time.max().dt.strftime('%Y%m').item()}"
-            )
-            filename = f"{filename_prefix}_{time_range}.nc"
-        else:
-            filename = f"{filename_prefix}.nc"
-
-        return output_path / filename
+        return output_path / prefix_to_filename(ds, filename_prefix)
