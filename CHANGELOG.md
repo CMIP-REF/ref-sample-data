@@ -21,6 +21,13 @@ from the examples given in that link.
 
 <!-- towncrier release notes start -->
 
+## ref-sample-data 0.4.1 (2025-03-01)
+
+### Bug Fixes
+
+- Don't wrap back to 360 degrees of longitude ([#19](https://github.com/CMIP-REF/ref-sample-data/pulls/19))
+
+
 ## ref-sample-data 0.4.0 (2025-03-01)
 
 ### Features
